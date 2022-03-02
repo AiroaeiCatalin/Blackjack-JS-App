@@ -22,7 +22,7 @@
         <br>
         <br>
 
-        <div id="sitButtons">
+        <div id="sitControls">
             <input id='sitValueField' type="text" placeholder="Enter Starting Balance Here..."/>
             <button id="sitButton">SIT</button>
         </div>
@@ -32,12 +32,12 @@
         <br>
 
         <div id="dealControls">
-            <select name="" id="">
+            <select name="" id="dealOption">
                 <option value="1">prima</option>
                 <option value="2">di</option>
                 <option value="3">trei</option>
             </select>
-            <button>DEAL</button>
+            <button id="dealButton">DEAL</button>
         </div>
 
         
@@ -58,37 +58,7 @@
 
     <script>
 
-        function sit() {}
-        function deal() {}
-        function turn() {}
-        function stand() {}
-
-        function hideNonSitControls() {
-            // hide pre-sit buttons
-            $('#dealButtons').hide()
-            $('#turnButtons').hide()
-        }
-
-        function hideSitControls() {
-            $('#sitButtons').hide()
-        }
-
-        function hideDealControls() {
-            $('#dealControls').hide()
-        }
-        function showDealControls() {
-            $('#dealControls').show()
-        }
-
-        function showTurnButtons() {
-            $('#turnButtons').show()
-        }
-
-        function endOfRound() {
-            //hide SIT/STAY buttons
-            //show DEAL button
-            //show STAND button
-        }
+        
 
 
         
@@ -106,15 +76,60 @@
         $( document ).ready(function() {
             console.log( "ready!" );
 
+            let sitControls = $('#sitControls')
+            let dealControls = $('#dealControls')
+            let turnButtons = $('#turnButtons')
+            let sitValueField = $('#sitValueField')
+            let sitButton = $('#sitButton')
 
+
+            function sit() {}
+            function deal() {}
+            function turn() {}
+            function stand() {}
+
+            function hideNonSitControls() {
+                // hide pre-sit buttons
+                dealControls.hide()
+                turnButtons.hide()
+            }
+
+            function hideSitControls() {
+                $('#sitControls').hide()
+            }
+
+            function hideDealControls() {
+                $('#dealControls').hide()
+            }
+            function showDealControls() {
+                $('#dealControls').show()
+            }
+
+            function showTurnButtons() {
+                $('#turnButtons').show()
+            }
+
+            function endOfRound() {
+                //hide SIT/STAY buttons
+                //show DEAL button
+                //show STAND button
+            }
+
+            // hide non-sit controls
             hideNonSitControls()
-            hideDealControls()
 
-
-            $('#sitButton').click(function() {
+            // after SIT
+            sitButton.click(function() {
                 console.log( $('#sitValueField').val() )
                 hideSitControls()
                 showDealControls()
+            })
+
+            // after DEAL
+            $('#dealButton').click(function() {
+                console.log( $('#dealOption').val() )
+                hideDealControls()
+                showTurnControls()
             })
         });
 
