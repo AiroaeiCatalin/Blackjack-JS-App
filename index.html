@@ -34,10 +34,7 @@
         <br>
 
         <div id="dealControls">
-            <select name="" id="dealOption">
-                <option value="1">prima</option>
-                <option value="2">di</option>
-                <option value="3">trei</option>
+            <select>
             </select>
             <button id="dealButton">DEAL</button>
         </div>
@@ -148,6 +145,10 @@
                         if(status == 'success') {
                             console.log('saving session ID in browser')
                             window.localStorage.blackjacSessionId = data.sessionId
+
+                            $.each(data.availableBetOptions, function( index, value ) {
+                                $('#dealControls select').append(`<option>${value}</option>`)
+                            });
                         }
                         
                     });
@@ -168,3 +169,6 @@
     </script>
 </body>
 </html>
+
+
+
