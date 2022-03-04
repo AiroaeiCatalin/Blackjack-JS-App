@@ -123,6 +123,11 @@
                 $('#cardScreen').append(rank + suite + '<br>')
             }
 
+            function appendDealerCard(rank, suite) {
+
+            }
+
+
 
 
 
@@ -144,7 +149,7 @@
                     $.post("https://blackjack.fuzz.me.uk/sit", {"balance": localStorage.balance}, function(data, status) {
                         console.log('status ' +  status)
                             console.log('saving session ID in browser')
-                            window.localStorage.blackjacSessionId = data.sessionId
+                            window.localStorage.blackjackSessionId = data.sessionId
 
                             $.each(data.availableBetOptions, function( index, value ) {
                                 $('#dealControls select').append(`<option>${value}</option>`)
@@ -165,15 +170,20 @@
                 hideDealControls()
                 showTurnControls()
 
-                $.post("https://blackjack.fuzz.me.uk/deal", {"bet": _,"sessionId": "fcc54929-1393-46c7-a660-2493ddbd6fde"}, function(data, status) {
+                $.post("https://blackjack.fuzz.me.uk/deal", {"bet": dealOption.val(),"sessionId": window.localStorage.blackjackSessionId}, function(data, status) {
                 
-                    if(status == 'success') {
-                        console.log('saving session ID in browser')
-                        window.localStorage.blackjacSessionId = data.sessionId
+                    // If round is not over
+                    if(data.roundEnded === false) {
 
-                        $.each(data.availableBetOptions, function( index, value ) {
-                            $('#dealControls select').append(`<option>${value}</option>`)
+
+                        $.each(data.playerCards, function( index, value ) {
+
+                            appendCard(value.rank, value.suite)
                         });
+
+                        // dealer has only one card on DEAL stage (the other card is face down)
+                        console.log(data.dealerCards[0].rank, data.dealerCards[0].suite)
+                        
                     }
                     
                 });
