@@ -11,6 +11,7 @@
 
     <div style="display: flex; flex-direction: column; align-items: center">
 
+        <h3>Dealer Cards</h3>
         <div id="dealerScreen" style="width: 100%;
         min-height: 100px;
         margin-bottom:30px;
@@ -19,6 +20,7 @@
         justify-content: center;
         max-width: 20rem;"></div>
         
+        <h3>Your Cards</h3>
         <div id="cardScreen" style="width: 100%;
         min-height: 100px;
         border: 4px solid grey;
@@ -29,6 +31,7 @@
        
 
         <div id="balance"> <h1>Balance: <span id="balanceScreen"></span></h1></div>
+        <div id="endOfRoundMessage"></div>
 
 
         <br>
@@ -54,8 +57,16 @@
         <br>
 <!-- margin in loc de br? -->
         <div id="turnControls">
-            <button>HIT</button>
-            <button>STAY</button>
+            <button id="hitButton">HIT</button>
+            <button id="stayButton">STAY</button>
+        </div>
+
+        <br>
+        <br>
+
+        <div id="endOfRoundControls">
+            <button id="playAnotherRound">PLAY ANOTHER ROUND</button>
+            <button id="standButton">STAND</button>
         </div>
 
     </div>
@@ -67,27 +78,13 @@
 
     <script>
 
-        
-
-
-        
-        
-        // $.post("https://blackjack.fuzz.me.uk/sit", {"balance": 20}, function(data, status) {
-            
-        //     if(status == 'success') {
-        //         console.log('saving session ID in browser')
-        //         window.localStorage.blackjacSessionId = data.sessionId
-
-        //     }
-
-        // });
-
         $( document ).ready(function() {
             console.log( "ready!" );
 
             let sitControls = $('#sitControls')
             let dealControls = $('#dealControls')
             let turnControls = $('#turnControls')
+            let endOfRoundControls = $('#endOfRoundControls')
             let sitValueField = $('#sitValueField')
             let sitButton = $('#sitButton')
             let dealOption = $('#dealOption')
@@ -100,11 +97,11 @@
             function turn() {}
             function stand() {}
 
-
+            //Hide everything besides sit controls
             function hideNonSitControls() {
-               // hide pre-sit buttons
                dealControls.hide()
                turnControls.hide()
+               endOfRoundControls.hide()
                balance.hide()
             }
 
@@ -119,14 +116,16 @@
                 dealControls.show()
             }
 
-            function endOfRound() {
-                //hide SIT/STAY buttons
-                //show DEAL button
-                //show STAND button
-            }
-
             function showTurnControls() {
                 turnControls.show()
+            }
+
+            function hideTurnControls() {
+                turnControls.hide()
+            }
+
+            function showEndOfRoundControls() {
+                endOfRoundControls.show()
             }
 
             function appendPlayerCard(rank, suite) {
@@ -137,6 +136,62 @@
                 $('#dealerScreen').append(rank + suite + '<br>')
             }
 
+            //vad daca nu se poate fara return
+            function convertSuiteToSymbol(suite){
+                switch (suite) {
+                    case "Clubs":
+                        return "♣";
+                    case "Diamonds":
+                        return "♢";
+                    case "Hearts":
+                        return "♡";
+                    case "Spades":
+                        return "♠";
+                    
+                }
+                console.log(suite)
+            }
+
+            function changeBalance() {
+
+            }
+
+            function displayWinAmount() {
+
+            }
+
+            function endOfRound() {
+                //hide SIT/STAY buttons
+                //show DEAL button
+                //show STAND button
+            }
+
+
+            function displayEndOfRoundMessage(won) {
+                if (won > 0) {
+                    $('#endOfRoundMessage').append("You Win")
+                } else {
+                    $('#endOfRoundMessage').append("You Lose")
+                }
+            }
+
+            function endOfRoundHandler(data, status) {
+                $('#dealerScreen').text('')
+
+                $.each(data.dealerCards, function( index, value ) {
+                    appendDealerCard(value.rank, convertSuiteToSymbol(value.suite))
+                });
+
+                hideTurnControls()
+                showEndOfRoundControls()
+
+                console.log(parseInt(data.winAmount))
+                console.log(parseInt(data.winAmount) > 0)
+                displayEndOfRoundMessage(parseInt(data.winAmount) ) //
+                changeBalance() //
+                displayWinAmount() //
+            }
+
 
 
 
@@ -144,10 +199,12 @@
             // hide non-sit controls
             hideNonSitControls()
 
-            // on SIT
+            // on SIT mut in functie de sit ce e in interior
             sitButton.click(function() {
+            
                 // if( sitValueField.val() >= 10  &&  sitValueField.val()  <= 1000) {
                     console.log( sitValueField.val() )
+                    $('#endOfRoundMessage').text("")
                     hideSitControls()
                     showDealControls()
                     
@@ -161,6 +218,7 @@
                             console.log('saving session ID in browser')
                             window.localStorage.blackjackSessionId = data.sessionId
 
+                            //fac functie
                             $.each(data.availableBetOptions, function( index, value ) {
                                 $('#dealControls select').append(`<option>${value}</option>`)
                             });
@@ -174,7 +232,7 @@
                 
             })
 
-            // on DEAL
+            // on DEAL la fel, mut
             $('#dealButton').click(function() {
                 console.log( dealOption.val() )
                 hideDealControls()
@@ -187,17 +245,41 @@
 
 
                         $.each(data.playerCards, function( index, value ) {
-
-                            appendPlayerCard(value.rank, value.suite)
+                            appendPlayerCard(value.rank, convertSuiteToSymbol(value.suite))
                         });
 
                         // dealer has only one card on DEAL stage (the other card is face down)
-                        appendDealerCard(data.dealerCards[0].rank, data.dealerCards[0].suite)
+                        appendDealerCard(data.dealerCards[0].rank, convertSuiteToSymbol(data.dealerCards[0].suite))
                         
                     }
                     
                 });
             })
+
+            // on TURN
+            $('#hitButton').click(function() {
+                $.post("https://blackjack.fuzz.me.uk/turn", {"action": "hit","sessionId": window.localStorage.blackjackSessionId}, function(data, status) {
+                
+                    appendPlayerCard(data.playerCard.rank, convertSuiteToSymbol(data.playerCard.suite))
+
+                    // If round is not over
+                    if(data.roundEnded === true) {
+                        endOfRoundHandler(data, status)
+                    }
+                    
+                    
+                })
+            })
+
+            $('#stayButton').click(function() {
+                
+                $.post("https://blackjack.fuzz.me.uk/turn", {"action": "stay","sessionId": window.localStorage.blackjackSessionId}, function(data, status) {
+                
+                    endOfRoundHandler(data, status)
+                })
+            })
+
+
         });
 
     </script>
