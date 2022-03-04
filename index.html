@@ -34,7 +34,7 @@
         <br>
 
         <div id="dealControls">
-            <select>
+            <select id="dealOption">
             </select>
             <button id="dealButton">DEAL</button>
         </div>
@@ -131,30 +131,31 @@
 
             // on SIT
             sitButton.click(function() {
-                if( sitValueField.val() >= 10  &&  sitValueField.val()  <= 1000) {
+                // if( sitValueField.val() >= 10  &&  sitValueField.val()  <= 1000) {
                     console.log( sitValueField.val() )
                     hideSitControls()
                     showDealControls()
                     
+                    $('#cardScreen').text('')
                     balance.show()
                     localStorage.balance = sitValueField.val() 
                     balanceScreen.text(sitValueField.val()  )
 
                     $.post("https://blackjack.fuzz.me.uk/sit", {"balance": localStorage.balance}, function(data, status) {
-                
-                        if(status == 'success') {
+                        console.log('status ' +  status)
                             console.log('saving session ID in browser')
                             window.localStorage.blackjacSessionId = data.sessionId
 
                             $.each(data.availableBetOptions, function( index, value ) {
                                 $('#dealControls select').append(`<option>${value}</option>`)
                             });
-                        }
                         
-                    });
-                }   else {
-                    $('#cardScreen').append('Balance must be greater than or equal to 10 and less than 1000 <br/>')
-                }
+                    }).fail(function(data) {
+                        $('#cardScreen').append( JSON.parse(data.responseText).validation.body.message )
+                        dealControls.hide()
+                        balance.hide()
+                        sitControls.show()
+                    })
                 
             })
 
@@ -163,6 +164,19 @@
                 console.log( dealOption.val() )
                 hideDealControls()
                 showTurnControls()
+
+                $.post("https://blackjack.fuzz.me.uk/deal", {"bet": _,"sessionId": "fcc54929-1393-46c7-a660-2493ddbd6fde"}, function(data, status) {
+                
+                    if(status == 'success') {
+                        console.log('saving session ID in browser')
+                        window.localStorage.blackjacSessionId = data.sessionId
+
+                        $.each(data.availableBetOptions, function( index, value ) {
+                            $('#dealControls select').append(`<option>${value}</option>`)
+                        });
+                    }
+                    
+                });
             })
         });
 
