@@ -124,9 +124,8 @@ $( document ).ready(function() {
         });
 
         hideTurnControls();
-        // changeBalance(data.currentBalance);
         if(data.currentBalance === 0){
-            displayEndOfRoundMessage(parseInt(data.winAmount), data.currentBalance); //
+            displayEndOfRoundMessage(parseInt(data.winAmount), data.currentBalance); 
             stand();
         } else {
             changeBalance(data.currentBalance);
@@ -136,7 +135,7 @@ $( document ).ready(function() {
         }
     }
 
-    function generateStandStats(roundsPlayed, winAmount,roundsPlayedElement, winAmountElement){
+    function generateStandStats(roundsPlayed, winAmount, roundsPlayedElement, winAmountElement){
         console.log(roundsPlayed + " " + winAmount)
         roundsPlayedElement.innerText = "Rounds played: " + roundsPlayed;
         if(winAmount > 0){
