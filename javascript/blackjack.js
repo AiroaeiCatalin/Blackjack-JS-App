@@ -14,6 +14,8 @@ $( document ).ready(function() {
     let dealerScreen = $('#dealerScreen');
     let gameContainer = $('#gameContainer')
 
+    console.log(3**2);
+
 
     // hide everything besides sit controls
     function hideNonSitControls() {
@@ -139,11 +141,11 @@ $( document ).ready(function() {
         console.log(roundsPlayed + " " + winAmount)
         roundsPlayedElement.innerText = "Rounds played: " + roundsPlayed;
         if(winAmount > 0){
-            winAmountElement.innerText = `You have won: ${winAmount} USD`;
+            winAmountElement.innerText = `You have won: ${winAmount} USD.`;
         } else if(winAmount < 0){
-            winAmountElement.innerText = `You have lost: ${Math.abs(winAmount)} USD`;
+            winAmountElement.innerText = `You have lost: ${Math.abs(winAmount)} USD.`;
         } else {
-            winAmountElement.innerText = `You have the same amount of USD as you had when you entered`;
+            winAmountElement.innerText = `You have the same amount of USD as you had when you entered.`;
         }
         gameContainer.append(roundsPlayedElement);
         gameContainer.append(winAmountElement);
@@ -163,6 +165,7 @@ $( document ).ready(function() {
         evt.target.style.display = 'none';
         evt.target.roundsPlayed.style.display = 'none';
         evt.target.winAmount.style.display = 'none';
+        cleanPlayerAndDealerScreens();
         endOfRoundMessage.text('');
         balance.hide();
         showSitControls();
