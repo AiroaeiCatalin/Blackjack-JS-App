@@ -14,7 +14,7 @@ $( document ).ready(function() {
     let dealerScreen = $('#dealerScreen');
     let gameContainer = $('#gameContainer')
 
-    console.log(3**2);
+    
 
 
     // hide everything besides sit controls
