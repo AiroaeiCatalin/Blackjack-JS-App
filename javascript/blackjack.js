@@ -14,7 +14,6 @@ $( document ).ready(function() {
     let dealerScreen = $('#dealerScreen');
     let gameContainer = $('#gameContainer')
 
-    
 
 
     // hide everything besides sit controls
@@ -82,7 +81,6 @@ $( document ).ready(function() {
                 return "♠";
             
         }
-
     }
 
     function setInitialBetOptions(betOptions){
@@ -171,30 +169,27 @@ $( document ).ready(function() {
 
     function sit() {
         endOfRoundMessage.text('');
-            hideSitControls();
-            showDealControls();
-            cleanPlayerAndDealerScreens();
-            balance.show();
+        cleanPlayerAndDealerScreens();
 
-            //saving balance into local storage
-            localStorage.balance = sitValueField.val();
-            balanceScreen.text(sitValueField.val());
+        //saving balance into local storage
+        localStorage.balance = sitValueField.val();
 
-            $.post("https://blackjack.fuzz.me.uk/sit", {"balance": localStorage.balance}, function(data, status) {
-                    //saving session id and bet options into storage
-                    localStorage.blackjackSessionId = data.sessionId;
-                    localStorage.betOptions = JSON.stringify(data.availableBetOptions);
-                    setInitialBetOptions(data.availableBetOptions);
+        $.post("https://blackjack.fuzz.me.uk/sit", {"balance": localStorage.balance}, function(data, status) {
+                //saving session id and bet options into storage
+                localStorage.blackjackSessionId = data.sessionId;
+                hideSitControls();
+                showDealControls();
+                balance.show();
+                balanceScreen.text(localStorage.balance);
+                localStorage.betOptions = JSON.stringify(data.availableBetOptions);
+                setInitialBetOptions(data.availableBetOptions);
 
-                
-            }).
-            fail(function(data) {
-                //displaying error message
-                playerScreen.append(JSON.parse(data.responseText).validation.body.message);
-                dealControls.hide();
-                balance.hide();
-                sitControls.show();
-            })
+
+            
+        }).fail(function(data) {
+            //displaying error message
+            playerScreen.append(JSON.parse(data.responseText).validation.body.message);
+        })
     }
     
     function deal() {
