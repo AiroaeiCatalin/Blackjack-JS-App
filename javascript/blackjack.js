@@ -82,7 +82,7 @@ $( document ).ready(function() {
                 return "♠";
             
         }
-        console.log(suite)
+
     }
 
     function setInitialBetOptions(betOptions){
@@ -96,7 +96,6 @@ $( document ).ready(function() {
     function setBetOptionsAfterRoundPlayed(){
         $('#dealControls select').text('');
         $.each(JSON.parse(localStorage.betOptions), function( index, value ) {
-            console.log(value < localStorage.balance)
             if(value <= localStorage.balance){
                 $('#dealControls select').append(`<option>${value}</option>`);
             }
@@ -138,7 +137,6 @@ $( document ).ready(function() {
     }
 
     function generateStandStats(roundsPlayed, winAmount, roundsPlayedElement, winAmountElement){
-        console.log(roundsPlayed + " " + winAmount)
         roundsPlayedElement.innerText = "Rounds played: " + roundsPlayed;
         if(winAmount > 0){
             winAmountElement.innerText = `You have won: ${winAmount} USD.`;
